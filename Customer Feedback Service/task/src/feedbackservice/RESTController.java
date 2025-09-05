@@ -1,5 +1,6 @@
 package feedbackservice;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,13 @@ public class RESTController {
 
     @GetMapping("feedback/{id}")
     public ResponseEntity<Optional<Feedback>> getFeedback(@PathVariable String id) {
-        return ResponseEntity.ok().body(feedbackRepository.findById(id));
+        return feedbackRepository.findById(id).isPresent() ?
+                ResponseEntity.ok().body(feedbackRepository.findById(id)) :
+                ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("feedback")
+    public ResponseEntity<Iterable<Feedback>> getAllFeedback() {
+        return ResponseEntity.ok().body(feedbackRepository.findAll(Sort.by("id").descending()));
     }
 }
