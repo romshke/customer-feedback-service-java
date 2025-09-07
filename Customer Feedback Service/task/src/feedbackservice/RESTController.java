@@ -1,19 +1,21 @@
 package feedbackservice;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Optional;
 
 @Controller
+@Validated
 public class RESTController {
     private final FeedbackRepository feedbackRepository;
 
@@ -43,7 +45,17 @@ public class RESTController {
     }
 
     @GetMapping("feedback")
-    public ResponseEntity<Iterable<Feedback>> getAllFeedback() {
-        return ResponseEntity.ok().body(feedbackRepository.findAll(Sort.by("id").descending()));
+    public ResponseEntity<PaginationResponse<Feedback>> getAllFeedback(PaginationRequest paginationRequest) {
+        int page = paginationRequest.getPage(), perPage = paginationRequest.getPerPage();
+
+        Pageable pageable = PageRequest.of(page - 1, perPage, Sort.by("id").descending());
+
+        Page<Feedback> feedbackPage = feedbackRepository.findAll(pageable);
+
+        PaginationResponse<Feedback> paginationResponse = new PaginationResponse<>(feedbackPage);
+
+        System.out.println(page + " " + perPage);
+
+        return ResponseEntity.ok(paginationResponse);
     }
 }
