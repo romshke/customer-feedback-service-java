@@ -5,11 +5,7 @@ public class PaginationRequest {
     private Integer perPage;
 
     public Integer getPage() {
-        if (page == null || perPage == null) {
-            return 1;
-        }
-
-        return page < 1 ? 1 : page;
+        return page != null && page > 0 ? page : 1;
     }
 
     public void setPage(Integer page) {
@@ -17,15 +13,7 @@ public class PaginationRequest {
     }
 
     public Integer getPerPage() {
-        if (page == null || perPage == null) {
-            return 10;
-        }
-
-        if (perPage < 5 || perPage > 20) {
-            return 10;
-        }
-
-        return perPage;
+        return perPage != null && perPage >= 5 && perPage <= 20 ? perPage : 10;
     }
 
     public void setPerPage(Integer perPage) {

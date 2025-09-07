@@ -1,9 +1,6 @@
 package feedbackservice;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -45,16 +42,23 @@ public class RESTController {
     }
 
     @GetMapping("feedback")
-    public ResponseEntity<PaginationResponse<Feedback>> getAllFeedback(PaginationRequest paginationRequest) {
+    public ResponseEntity<PaginationResponse<Feedback>> getAllFeedback(PaginationRequest paginationRequest, QueryRequest queryRequest) {
         int page = paginationRequest.getPage(), perPage = paginationRequest.getPerPage();
 
         Pageable pageable = PageRequest.of(page - 1, perPage, Sort.by("id").descending());
 
-        Page<Feedback> feedbackPage = feedbackRepository.findAll(pageable);
+        Example<Feedback> example = Example.of(
+                new Feedback(
+                        queryRequest.getRating(),
+                        queryRequest.getCustomer(),
+                        queryRequest.getProduct(),
+                        queryRequest.getVendor()
+                )
+        );
+
+        Page<Feedback> feedbackPage = feedbackRepository.findAll(example, pageable);
 
         PaginationResponse<Feedback> paginationResponse = new PaginationResponse<>(feedbackPage);
-
-        System.out.println(page + " " + perPage);
 
         return ResponseEntity.ok(paginationResponse);
     }

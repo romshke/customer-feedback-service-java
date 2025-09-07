@@ -11,18 +11,14 @@ public class Feedback {
     @Id
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId id;
-    private int rating;
+    private Integer rating;
     private String feedback;
     private String customer;
     private String product;
     private String vendor;
 
-    public Feedback() {
-    }
-
-    public Feedback(int rating, String feedback, String customer, String product, String vendor) {
+    public Feedback(Integer rating, String customer, String product, String vendor) {
         this.rating = rating;
-        this.feedback = feedback;
         this.customer = customer;
         this.product = product;
         this.vendor = vendor;
@@ -36,11 +32,11 @@ public class Feedback {
         this.id = id;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 
@@ -74,5 +70,17 @@ public class Feedback {
 
     public void setVendor(String vendor) {
         this.vendor = vendor;
+    }
+
+    @Override
+    public String toString() {
+        return "Feedback{" +
+                "id=" + id +
+                ", rating=" + rating +
+                ", feedback='" + feedback + '\'' +
+                ", customer='" + customer + '\'' +
+                ", product='" + product + '\'' +
+                ", vendor='" + vendor + '\'' +
+                '}';
     }
 }
